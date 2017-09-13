@@ -13,6 +13,9 @@ from fabric.api import run
 from fabric.contrib.files import append
 import fabric.utils
 
+from rapstorevm import common
+from rapstorevm import riotam
+
 
 SERVER = '141.22.28.91'
 
@@ -24,6 +27,8 @@ def setup():
     """Setup the virtual machine."""
     run('echo "Hello World"')
     execute(setup_known_hosts)
+    execute(setup_python)
+    execute(riotam.setup)
 
 
 GITHUB_RSA_KEY = (
@@ -51,3 +56,9 @@ def setup_known_hosts(hosts=HOSTS):
     for host_tuple in hosts:
         fabric.utils.puts('Registering Host {0}'.format(host_tuple[0]))
         append('.ssh/known_hosts', ' '.join(host_tuple))
+
+
+@task
+def setup_python():
+    """Install python dependencies."""
+    common.apt_install('python')
