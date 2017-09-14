@@ -28,6 +28,7 @@ def setup():
     run('echo "Hello World"')
     execute(setup_known_hosts)
     execute(setup_python)
+    execute(setup_git)
     execute(riotam.setup)
 
 
@@ -62,3 +63,9 @@ def setup_known_hosts(hosts=HOSTS):
 def setup_python():
     """Install python dependencies."""
     common.apt_install('python')
+
+
+@task
+def setup_git():
+    """Install git."""
+    common.apt_install('git')
