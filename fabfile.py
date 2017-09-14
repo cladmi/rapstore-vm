@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 
 
 from fabric.api import env, task, execute
-from fabric.api import run
+from fabric.api import run, sudo
 from fabric.contrib.files import append
 import fabric.utils
 
@@ -29,6 +29,7 @@ def setup():
     execute(setup_known_hosts)
     execute(setup_python)
     execute(setup_git)
+    execute(setup_riot_build_tools)
     execute(riotam.setup)
 
 
@@ -69,3 +70,16 @@ def setup_python():
 def setup_git():
     """Install git."""
     common.apt_install('git')
+
+
+@task
+def setup_riot_build_tools():
+    """Install riot build tools."""
+    common.apt_install('build-essential')
+    common.apt_install('unzip')
+    _install_arm_gcc()
+
+
+def _install_arm_gcc():
+    sudo('add-apt-repository -uy ppa:team-gcc-arm-embedded/ppa')
+    common.apt_install('gcc-arm-embedded')
