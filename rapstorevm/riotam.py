@@ -11,6 +11,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import os.path
 
+from io import BytesIO
+
 from fabric.api import task, sudo, put, execute
 from fabric.contrib.files import sed
 from fabric.context_managers import cd
@@ -32,6 +34,24 @@ def setup():
     """Setup RIOT AppMarket"""
     common.apt_install('python-mysqldb')
     execute(setup_apache)
+    execute(setup_www_data)
+
+
+GITCONFIG = '''\
+[user]
+\temail = {user}@localhost
+\tname = {title} {title}
+'''
+
+
+@task
+def setup_www_data():
+    """Setup www-data .gitconfig for compiling packages (using git am)."""
+    user = 'www-data'
+    gitconfig = GITCONFIG.format(user=user, title=user.title())
+    config = BytesIO(gitconfig.encode('utf-8'))
+    put(config, '/var/www/.gitconfig', use_sudo=True)
+    sudo('chown www-data:www-data /var/www/.gitconfig')
 
 
 @task
