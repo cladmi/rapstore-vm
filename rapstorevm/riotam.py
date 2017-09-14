@@ -13,8 +13,18 @@ import os.path
 
 from fabric.api import task, sudo, put, execute
 from fabric.contrib.files import sed
+from fabric.context_managers import cd
 
 from . import common
+
+
+WWW_HOME = '/var/www'
+
+RIOTAM_ROOT = os.path.join(WWW_HOME, 'riotam-website')
+RIOTAM_WEBSITE_REPO = 'https://github.com/HendrikVE/riotam-website'
+
+RIOTAM_BACKEND = os.path.join(WWW_HOME, 'riotam-backend')
+RIOTAM_BACKEND_REPO = 'https://github.com/HendrikVE/riotam-backend'
 
 
 @task
@@ -28,19 +38,71 @@ def setup():
 def setup_apache():
     """Setup apache server."""
     site = '000-default.conf'
-    document_root = '/var/www/riotam-website'
     riotamconf = '/etc/apache2/sites-available/%s' % site
 
     common.apt_install('apache2')
     sudo('a2enmod cgi')
 
     put(common.template('riotam/apache2/%s' % site), riotamconf, use_sudo=True)
-    sed(riotamconf, 'DOCUMENT_ROOT', document_root, use_sudo=True)
+    sed(riotamconf, 'DOCUMENT_ROOT', RIOTAM_ROOT, use_sudo=True)
     sudo('a2ensite %s' % site)
 
-    sudo('mkdir -p %s' % document_root)
-    put(common.template('riotam/apache2/riotam_default_index.py'),
-        os.path.join(document_root, 'index.py'), use_sudo=True,
-        mode=0o0755)
+    execute(setup_riotam)
+    execute(setup_database)
+    execute(update_database)
 
     sudo('systemctl restart apache2')
+
+
+@task
+def setup_riotam():
+    """Setup RIOT AM application."""
+    _setup_riotam_website_repository()
+    _setup_riotam_backend()
+
+
+def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
+    """Clone website."""
+    common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version)
+
+
+def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
+    """Clone backend which clones RIOT.
+
+    Setup write permissions on required directories.
+    """
+    common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive')
+    sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
+
+    _setup_riotam_backend_writeable_directories(directory)
+
+
+def _setup_riotam_backend_writeable_directories(directory):
+    """Setup the writeable directories required by the backend."""
+    # TODO set this configurable somehow
+    writeable_dirs = ['tmp', 'log', 'RIOT/generated_by_riotam']
+    with cd(directory):
+        dirs = ' '.join(writeable_dirs)
+        sudo('mkdir -p %s' % dirs)
+        sudo('chown www-data %s' % dirs)
+
+
+@task
+def setup_database():
+    """Setup database.
+
+    Install and init tables.
+    """
+    common.apt_install('mysql-server')
+
+    # Scripts expects to be run from the setup directory
+    with cd(os.path.join(RIOTAM_BACKEND, 'setup')):
+        sudo('python %s' % 'db_create.py')
+        sudo('python %s' % 'db_setup.py')
+
+
+@task
+def update_database():
+    """Update database with RIOT information."""
+    with cd(RIOTAM_BACKEND):
+        sudo('python %s' % 'db_update.py')
