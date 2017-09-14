@@ -28,3 +28,13 @@ def apt_install(packages, options=''):
     execute(apt_update)
     install = 'DEBIAN_FRONTEND=noninteractive apt-get install {0} -yqq {1}'
     sudo(install.format(options, packages))
+
+
+def clone_repo(repo, directory='', branch='master', options=''):
+    """Clone repository.
+
+    Currently delete it before cloning.
+    """
+    sudo('rm -rf %s' % directory)
+    sudo('git clone {options} --quiet {repo} --branch {branch} {dir}'.format(
+        repo=repo, branch=branch, dir=directory, options=options))
