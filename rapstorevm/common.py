@@ -11,6 +11,7 @@ from fabric.api import sudo, runs_once, execute
 
 TEMPLATE_DIR = 'rapstorevm/template'
 
+
 def template(*args):
     """Template file path."""
     return os.path.join(TEMPLATE_DIR, *args)
@@ -19,10 +20,11 @@ def template(*args):
 @runs_once
 def apt_update():
     """apt-get update"""
-    sudo('apt-get update')
+    sudo('apt-get update -yqq')
 
 
 def apt_install(packages, options=''):
     """Install packages in non-interactive mode."""
     execute(apt_update)
-    sudo('apt-get install {0} -yqq {1}'.format(options, packages))
+    install = 'DEBIAN_FRONTEND=noninteractive apt-get install {0} -yqq {1}'
+    sudo(install.format(options, packages))
