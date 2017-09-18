@@ -84,6 +84,11 @@ def setup_riotam():
 def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
     """Clone website."""
     common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version)
+    writeable_dirs = ['log']
+    with cd(directory):
+        dirs = ' '.join(writeable_dirs)
+        sudo('mkdir -p %s' % dirs)
+        sudo('chown www-data %s' % dirs)
 
 
 def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
