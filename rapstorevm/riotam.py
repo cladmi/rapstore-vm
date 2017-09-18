@@ -99,7 +99,14 @@ def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
     common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive')
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
+    _setup_riot_stripped(directory)
     _setup_riotam_backend_writeable_directories(directory)
+
+
+def _setup_riot_stripped(directory):
+    """Create RIOT_stripped for the backend."""
+    with cd(directory):
+        sudo('python strip_riot_repo.py')
 
 
 def _setup_riotam_backend_writeable_directories(directory):
