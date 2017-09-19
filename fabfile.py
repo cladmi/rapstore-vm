@@ -77,9 +77,32 @@ def setup_riot_build_tools():
     """Install riot build tools."""
     common.apt_install('build-essential')
     common.apt_install('unzip')
+    _install_riot_native_build()
     _install_arm_gcc()
+    _install_msp430()
+
+
+def _install_riot_native_build():
+    """Install build tools for native."""
+    common.apt_install('libc6-dev-i386')
 
 
 def _install_arm_gcc():
+    """Install arm gcc from launchpad ppa."""
     sudo('add-apt-repository -uy ppa:team-gcc-arm-embedded/ppa')
     common.apt_install('gcc-arm-embedded')
+
+
+def _install_msp430():
+    """Install msp430 gcc.
+
+    Use the repository version as sourceforge one is tricky to install
+    and the newest version is not yet supported.
+    """
+    common.apt_install('gcc-msp430')
+
+
+@task
+def _install_avr():
+    """Install avr gcc."""
+    common.apt_install('gcc-avr')
