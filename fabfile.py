@@ -8,9 +8,11 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 
+import os.path
 from fabric.api import env, task, execute
 from fabric.api import run, sudo
 from fabric.contrib.files import append
+from fabric.context_managers import cd
 import fabric.utils
 
 from rapstorevm import common
@@ -18,6 +20,7 @@ from rapstorevm import riotam
 
 
 SERVER = '141.22.28.91'
+OPTBASHRC = '/opt/bashrc'
 
 env.host_string = SERVER
 
@@ -80,6 +83,8 @@ def setup_riot_build_tools():
     _install_riot_native_build()
     _install_arm_gcc()
     _install_msp430()
+    _install_mips_gcc()
+    _install_avr()
 
 
 def _install_riot_native_build():
@@ -102,7 +107,25 @@ def _install_msp430():
     common.apt_install('gcc-msp430')
 
 
-@task
+MIPS_GCC = ('https://community.imgtec.com/?do-download='
+            'linux-x64-mti-bare-metal-{version}')
+
+def _install_mips_gcc(version='2016.05-03'):
+    """Install mips gcc."""
+    url_version = version.replace('.', '-')
+    url = MIPS_GCC.format(version=url_version)
+
+    archive = 'mips-gcc-%s.tar.gz' % url_version
+    archive_out = 'mips-mti-elf'
+    bindir = os.path.join('/opt', archive_out, version, 'bin')
+
+    with cd('/opt'):
+        sudo('wget -c %s -O %s' % (url, archive))
+        sudo('tar xvf %s' % archive)
+        sudo('chmod -R a+r %s' % archive_out)
+    append(OPTBASHRC, 'export PATH="%s:${PATH}"' % bindir, use_sudo=True)
+
+
 def _install_avr():
     """Install avr gcc."""
-    common.apt_install('gcc-avr')
+    common.apt_install('gcc-avr avr-libc')
