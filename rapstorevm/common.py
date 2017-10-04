@@ -30,11 +30,12 @@ def apt_install(packages, options=''):
     sudo(install.format(options, packages))
 
 
-def clone_repo(repo, directory='', branch='master', options=''):
+def clone_repo(repo, directory='', branch='master', options='', run_as_user=None):
     """Clone repository.
 
     Currently delete it before cloning.
     """
     sudo('rm -rf %s' % directory)
-    sudo('git clone {options} --quiet {repo} --branch {branch} {dir}'.format(
-        repo=repo, branch=branch, dir=directory, options=options))
+    
+    cmd = 'git clone {options} --quiet {repo} --branch {branch} {dir}'.format(repo=repo, branch=branch, dir=directory, options=options)
+    sudo(cmd, user=run_as_user)

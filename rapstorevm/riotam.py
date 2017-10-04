@@ -51,7 +51,7 @@ def setup_www_data():
     gitconfig = GITCONFIG.format(user=user, title=user.title())
     config = BytesIO(gitconfig.encode('utf-8'))
     put(config, '/var/www/.gitconfig', use_sudo=True)
-    sudo('chown www-data:www-data /var/www/.gitconfig')
+    sudo('chown -R www-data:www-data /var/www/')
 
 
 @task
@@ -83,7 +83,7 @@ def setup_riotam():
 
 def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
     """Clone website."""
-    common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version)
+    common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
     writeable_dirs = ['log']
     with cd(directory):
         dirs = ' '.join(writeable_dirs)
@@ -96,7 +96,7 @@ def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
 
     Setup write permissions on required directories.
     """
-    common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive')
+    common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
     _setup_riot_stripped(directory)

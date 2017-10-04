@@ -23,6 +23,7 @@ SERVER = '141.22.28.91'
 OPTBASHRC = '/opt/bashrc'
 
 env.host_string = SERVER
+env.user = "harter"
 
 
 @task
