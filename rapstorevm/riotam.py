@@ -13,7 +13,7 @@ import os.path
 
 from io import BytesIO
 
-from fabric.api import task, sudo, put, execute
+from fabric.api import task, sudo, put, execute, settings
 from fabric.contrib.files import sed
 from fabric.context_managers import cd
 
@@ -29,6 +29,9 @@ RIOTAM_WEBSITE_DB_PASSWORD = 'xuEw2m9De32k'
 RIOTAM_BACKEND = os.path.join(WWW_HOME, 'riotam-backend')
 RIOTAM_BACKEND_REPO = 'https://github.com/HendrikVE/riotam-backend'
 RIOTAM_BACKEND_DB_PASSWORD = '7BdACfnQmWhq'
+
+DB_USER = 'root'
+DB_PASSWORD = ''
 
 
 @task
@@ -157,7 +160,14 @@ def setup_database():
 
     # Scripts expects to be run from the setup directory
     with cd(os.path.join(RIOTAM_BACKEND, 'setup')):
-        sudo('python %s' % 'db_create.py')
+
+        setup_prompts = {'Please enter name of privileged database user: ': DB_USER,
+                         'Password:': DB_PASSWORD}
+
+        # automatically answer prompts from db_create script
+        with settings(prompts=setup_prompts):
+            sudo('python %s' % 'db_create.py')
+
         sudo('python %s' % 'db_setup.py')
 
 
