@@ -162,7 +162,7 @@ def setup_database():
     with cd(os.path.join(RIOTAM_BACKEND, 'setup')):
 
         setup_prompts = {'Please enter name of privileged database user: ': DB_USER,
-                         'Password:': DB_PASSWORD}
+                         'Password: ': DB_PASSWORD}
 
         # automatically answer prompts from db_create script
         with settings(prompts=setup_prompts):

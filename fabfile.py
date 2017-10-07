@@ -111,6 +111,7 @@ def _install_msp430():
 MIPS_GCC = ('https://community.imgtec.com/?do-download='
             'linux-x64-mti-bare-metal-{version}')
 
+
 def _install_mips_gcc(version='2016.05-03'):
     """Install mips gcc."""
     url_version = version.replace('.', '-')
