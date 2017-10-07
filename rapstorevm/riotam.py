@@ -24,9 +24,11 @@ WWW_HOME = '/var/www'
 
 RIOTAM_ROOT = os.path.join(WWW_HOME, 'riotam-website')
 RIOTAM_WEBSITE_REPO = 'https://github.com/HendrikVE/riotam-website'
+RIOTAM_WEBSITE_DB_PASSWORD = 'xuEw2m9De32k'
 
 RIOTAM_BACKEND = os.path.join(WWW_HOME, 'riotam-backend')
 RIOTAM_BACKEND_REPO = 'https://github.com/HendrikVE/riotam-backend'
+RIOTAM_BACKEND_DB_PASSWORD = '7BdACfnQmWhq'
 
 
 @task
@@ -84,6 +86,15 @@ def setup_riotam():
 def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
     """Clone website."""
     common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
+
+    # setup config file with password
+    config_file = os.path.join(directory, "config", "db_config.py")
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "db_config_EXAMPLE.py"),
+                                 dst=config_file))
+
+    # replace password in config file inline
+    common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
+
     writeable_dirs = ['log']
     with cd(directory):
         dirs = ' '.join(writeable_dirs)
@@ -98,6 +109,23 @@ def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
     """
     common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
+
+    # setup config file with password
+    config_file_config = os.path.join(os.path.join(directory, "config", "db_config.py"))
+    config_file_setup = os.path.join(os.path.join(directory, "setup", "db_config.py"))
+
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "db_config_EXAMPLE.py"),
+                                 dst=config_file_config))
+
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "setup", "db_config_EXAMPLE.py"),
+                                 dst=config_file_setup))
+
+    # replace password in config file inline
+    common.replace_word_in_file(config_file_config, 'PASSWORD_BACKEND', RIOTAM_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_config, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
+
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', RIOTAM_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
 
     _setup_riot_stripped(directory)
     _setup_riotam_backend_writeable_directories(directory)
