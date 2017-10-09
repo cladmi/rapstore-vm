@@ -71,3 +71,6 @@ Session.vim
 
 # PyCharm IDE
 .idea/
+
+# config files containing passwords
+server_config.py

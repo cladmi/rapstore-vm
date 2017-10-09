@@ -18,20 +18,7 @@ from fabric.contrib.files import sed
 from fabric.context_managers import cd
 
 from . import common
-
-
-WWW_HOME = '/var/www'
-
-RIOTAM_ROOT = os.path.join(WWW_HOME, 'riotam-website')
-RIOTAM_WEBSITE_REPO = 'https://github.com/HendrikVE/riotam-website'
-RIOTAM_WEBSITE_DB_PASSWORD = 'xuEw2m9De32k'
-
-RIOTAM_BACKEND = os.path.join(WWW_HOME, 'riotam-backend')
-RIOTAM_BACKEND_REPO = 'https://github.com/HendrikVE/riotam-backend'
-RIOTAM_BACKEND_DB_PASSWORD = '7BdACfnQmWhq'
-
-DB_USER = 'root'
-DB_PASSWORD = ''
+from .config import server_config as config
 
 
 @task
@@ -69,7 +56,7 @@ def setup_apache():
     sudo('a2enmod cgi')
 
     put(common.template('riotam/apache2/%s' % site), riotamconf, use_sudo=True)
-    sed(riotamconf, 'DOCUMENT_ROOT', RIOTAM_ROOT, use_sudo=True)
+    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_ROOT, use_sudo=True)
     sudo('a2ensite %s' % site)
 
     execute(setup_riotam)
@@ -86,9 +73,9 @@ def setup_riotam():
     _setup_riotam_backend()
 
 
-def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
+def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='master'):
     """Clone website."""
-    common.clone_repo(RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
+    common.clone_repo(config.RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
 
     # setup config file with password
     config_file = os.path.join(directory, "config", "db_config.py")
@@ -96,7 +83,7 @@ def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
                                  dst=config_file))
 
     # replace password in config file inline
-    common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
     writeable_dirs = ['log']
     with cd(directory):
@@ -105,12 +92,12 @@ def _setup_riotam_website_repository(directory=RIOTAM_ROOT, version='master'):
         sudo('chown www-data %s' % dirs)
 
 
-def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
+def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     """Clone backend which clones RIOT.
 
     Setup write permissions on required directories.
     """
-    common.clone_repo(RIOTAM_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
+    common.clone_repo(config.RIOTAM_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
     # setup config file with password
@@ -124,11 +111,11 @@ def _setup_riotam_backend(directory=RIOTAM_BACKEND, version='master'):
                                  dst=config_file_setup))
 
     # replace password in config file inline
-    common.replace_word_in_file(config_file_config, 'PASSWORD_BACKEND', RIOTAM_BACKEND_DB_PASSWORD)
-    common.replace_word_in_file(config_file_config, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file_config, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_config, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
-    common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', RIOTAM_BACKEND_DB_PASSWORD)
-    common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
     _setup_riot_stripped(directory)
     _setup_riotam_backend_writeable_directories(directory)
@@ -159,10 +146,10 @@ def setup_database():
     common.apt_install('mysql-server')
 
     # Scripts expects to be run from the setup directory
-    with cd(os.path.join(RIOTAM_BACKEND, 'setup')):
+    with cd(os.path.join(config.RIOTAM_BACKEND, 'setup')):
 
-        setup_prompts = {'Please enter name of privileged database user: ': DB_USER,
-                         'Password: ': DB_PASSWORD}
+        setup_prompts = {'Please enter name of privileged database user: ': config.DB_USER,
+                         'Password: ': config.DB_PASSWORD}
 
         # automatically answer prompts from db_create script
         with settings(prompts=setup_prompts):
@@ -174,5 +161,5 @@ def setup_database():
 @task
 def update_database():
     """Update database with RIOT information."""
-    with cd(RIOTAM_BACKEND):
+    with cd(config.RIOTAM_BACKEND):
         sudo('python %s' % 'db_update.py')
