@@ -17,19 +17,19 @@ import fabric.utils
 
 from rapstorevm import common
 from rapstorevm import riotam
+from rapstorevm.config import server_config as config
 
 
-SERVER = '141.22.28.91'
 OPTBASHRC = '/opt/bashrc'
 
-env.host_string = SERVER
-env.user = "harter"
+env.host_string = config.SERVER
+env.user = config.SSH_USER
 
 
 @task
 def setup():
     """Setup the virtual machine."""
-    run('echo "Hello World"')
+    run('echo "Running setup..."')
     execute(setup_known_hosts)
     execute(setup_python)
     execute(setup_git)
