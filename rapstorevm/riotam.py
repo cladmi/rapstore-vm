@@ -101,10 +101,10 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
     # setup config file with password
-    config_file_config = os.path.join(os.path.join(directory, "config", "db_config.py"))
+    config_file_config = os.path.join(os.path.join(directory, "config", "config.py"))
     config_file_setup = os.path.join(os.path.join(directory, "setup", "db_config.py"))
 
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "db_config_EXAMPLE.py"),
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "config_EXAMPLE.py"),
                                  dst=config_file_config))
 
     sudo('cp {src} {dst}'.format(src=os.path.join(directory, "setup", "db_config_EXAMPLE.py"),
