@@ -117,6 +117,8 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
     common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
+    common.replace_word_in_file(config_file_config, 'SECRET_KEY', config.GITHUB_SECRET_KEY)
+
     _setup_riot_stripped(directory)
     _setup_riotam_backend_writeable_directories(directory)
 
