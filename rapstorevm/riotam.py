@@ -84,6 +84,7 @@ def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='mast
 
     # replace password in config file inline
     common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file, 'YOUR_SECRET_KEY', config.GITHUB_SECRET_KEY)
 
     writeable_dirs = ['log']
     with cd(directory):
@@ -116,8 +117,6 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
 
     common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
     common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
-
-    common.replace_word_in_file(config_file_config, 'SECRET_KEY', config.GITHUB_SECRET_KEY)
 
     _setup_riot_stripped(directory)
     _setup_riotam_backend_writeable_directories(directory)
