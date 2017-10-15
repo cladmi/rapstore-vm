@@ -78,8 +78,8 @@ def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='mast
     common.clone_repo(config.RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
 
     # setup config file with password
-    config_file = os.path.join(directory, "config", "config.py")
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "config_EXAMPLE.py"),
+    config_file = os.path.join(directory, 'config', 'config.py')
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'config', 'config_EXAMPLE.py'),
                                  dst=config_file))
 
     # replace password in config file inline
@@ -102,13 +102,13 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
     # setup config file with password
-    config_file_config = os.path.join(os.path.join(directory, "config", "config.py"))
-    config_file_setup = os.path.join(os.path.join(directory, "setup", "db_config.py"))
+    config_file_config = os.path.join(os.path.join(directory, 'riotam_backend', 'config', 'config.py'))
+    config_file_setup = os.path.join(os.path.join(directory, 'riotam_backend', 'setup', 'db_config.py'))
 
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "config", "config_EXAMPLE.py"),
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'riotam_backend', 'config', 'config_EXAMPLE.py'),
                                  dst=config_file_config))
 
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, "setup", "db_config_EXAMPLE.py"),
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'riotam_backend', 'setup', 'db_config_EXAMPLE.py'),
                                  dst=config_file_setup))
 
     # replace password in config file inline
@@ -118,7 +118,7 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
     common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
-    _setup_riot_stripped(directory)
+    _setup_riot_stripped(os.path.join(directory, 'riotam_backend'))
     _setup_riotam_backend_writeable_directories(directory)
 
 
@@ -147,7 +147,7 @@ def setup_database():
     common.apt_install('mysql-server')
 
     # Scripts expects to be run from the setup directory
-    with cd(os.path.join(config.RIOTAM_BACKEND, 'setup')):
+    with cd(os.path.join(config.RIOTAM_BACKEND, 'riotam_backend', 'setup')):
 
         setup_prompts = {'Please enter name of privileged database user: ': config.DB_USER,
                          'Password: ': config.DB_PASSWORD}
@@ -162,5 +162,5 @@ def setup_database():
 @task
 def update_database():
     """Update database with RIOT information."""
-    with cd(config.RIOTAM_BACKEND):
+    with cd(os.path.join(config.RIOTAM_BACKEND, 'riotam_backend', 'tasks', 'database')):
         sudo('python %s' % 'db_update.py')
