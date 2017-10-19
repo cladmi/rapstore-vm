@@ -56,7 +56,8 @@ def setup_apache():
     sudo('a2enmod cgi')
 
     put(common.template('riotam/apache2/%s' % site), riotamconf, use_sudo=True)
-    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_ROOT, use_sudo=True)
+    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_DOCUMENT_ROOT, use_sudo=True)
+    sed(riotamconf, 'RESOURCES_ROOT', config.RIOTAM_ROOT, use_sudo=True)
     sudo('a2ensite %s' % site)
 
     execute(setup_riotam)

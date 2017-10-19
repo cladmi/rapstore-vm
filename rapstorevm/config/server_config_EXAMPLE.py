@@ -14,6 +14,7 @@ WWW_HOME = '/var/www'
 GITHUB_SECRET_KEY = 'SECRET_KEY'
 
 RIOTAM_ROOT = os.path.join(WWW_HOME, 'riotam-website')
+RIOTAM_DOCUMENT_ROOT = os.path.join(RIOTAM_ROOT, 'riotam_website')
 RIOTAM_WEBSITE_REPO = 'https://github.com/HendrikVE/riotam-website'
 RIOTAM_WEBSITE_DB_PASSWORD = 'PASSWORD_WEBSITE'
 
