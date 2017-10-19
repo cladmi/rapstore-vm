@@ -79,8 +79,9 @@ def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='mast
     common.clone_repo(config.RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
 
     # setup config file with password
-    config_file = os.path.join(directory, 'config', 'config.py')
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'config', 'config_EXAMPLE.py'),
+    path_to_config = os.path.join(directory, 'riotam_website', 'config')
+    config_file = os.path.join(path_to_config, 'config.py')
+    sudo('cp {src} {dst}'.format(src=os.path.join(path_to_config, 'config_EXAMPLE.py'),
                                  dst=config_file))
 
     # replace password in config file inline
