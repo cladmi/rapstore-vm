@@ -120,6 +120,9 @@ def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
     common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
     common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
 
+    common.replace_word_in_file(config_file_setup, 'USER_PRIVILEGED', config.DB_USER)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_PRIVILEGED', config.DB_PASSWORD)
+
     _setup_riot_stripped(os.path.join(directory, 'riotam_backend'))
     _setup_riotam_backend_writeable_directories(directory)
 
@@ -151,13 +154,7 @@ def setup_database():
     # Scripts expects to be run from the setup directory
     with cd(os.path.join(config.RIOTAM_BACKEND, 'riotam_backend', 'setup')):
 
-        setup_prompts = {'Please enter name of privileged database user: ': config.DB_USER,
-                         'Password: ': config.DB_PASSWORD}
-
-        # automatically answer prompts from db_create script
-        with settings(prompts=setup_prompts):
-            sudo('python %s' % 'db_create.py')
-
+        sudo('python %s' % 'db_create.py')
         sudo('python %s' % 'db_setup.py')
 
 
