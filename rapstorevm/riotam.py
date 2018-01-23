@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
-"""RIOT AppMarket
+"""Rapstore
 
-Project repository: https://github.com/HendrikVE/riotam
+Project repository: https://github.com/riot-appstore/riotam
 """
 
 
@@ -13,18 +13,23 @@ import os.path
 
 from io import BytesIO
 
-from fabric.api import task, sudo, put, execute, settings
+from fabric.api import task, run, sudo, put, execute
 from fabric.contrib.files import sed
 from fabric.context_managers import cd
 
 from . import common
 from .config import server_config as config
 
+CUR_DIR = os.path.abspath(os.path.dirname(__file__))
+
 
 @task
 def setup():
     """Setup RIOT AppMarket"""
     common.apt_install('python-mysqldb')
+    common.apt_install('python-pip')
+
+    run('pip install pycrypto')
     execute(setup_apache)
     execute(setup_www_data)
 
@@ -55,9 +60,9 @@ def setup_apache():
     common.apt_install('apache2')
     sudo('a2enmod cgi')
 
-    put(common.template('riotam/apache2/%s' % site), riotamconf, use_sudo=True)
-    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_DOCUMENT_ROOT, use_sudo=True)
-    sed(riotamconf, 'RESOURCES_ROOT', config.RIOTAM_ROOT, use_sudo=True)
+    put(common.template('riotam/apache2/%s' % site), config.RIOTAM_WEBSITE_ROOT, use_sudo=True)
+    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_WEBSITE_DOCUMENT_ROOT, use_sudo=True)
+    sed(riotamconf, 'RESOURCES_ROOT', config.RIOTAM_WEBSITE_ROOT, use_sudo=True)
     sudo('a2ensite %s' % site)
 
     execute(setup_riotam)
@@ -74,7 +79,7 @@ def setup_riotam():
     _setup_riotam_backend()
 
 
-def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='master'):
+def _setup_riotam_website_repository(directory=config.RIOTAM_WEBSITE_ROOT, version='master'):
     """Clone website."""
     common.clone_repo(config.RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
 
@@ -93,6 +98,13 @@ def _setup_riotam_website_repository(directory=config.RIOTAM_ROOT, version='mast
         dirs = ' '.join(writeable_dirs)
         sudo('mkdir -p %s' % dirs)
         sudo('chown www-data %s' % dirs)
+
+    put(os.path.join(CUR_DIR, os.pardir,'website.pem'), directory, use_sudo=True)
+
+    path_website_key = os.path.join(directory, 'website.pem')
+
+    sudo('chmod 600 %s' % path_website_key)
+    sudo('chown www-data:www-data %s' % path_website_key)
 
 
 def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):

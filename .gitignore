@@ -74,3 +74,6 @@ Session.vim
 
 # config files containing passwords
 server_config.py
+
+# private keys
+*.pem
