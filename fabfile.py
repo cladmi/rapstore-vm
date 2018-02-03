@@ -16,7 +16,7 @@ from fabric.context_managers import cd
 import fabric.utils
 
 from rapstorevm import common
-from rapstorevm import riotam
+from rapstorevm import rapstore
 from rapstorevm.config import server_config as config
 
 
@@ -34,7 +34,7 @@ def setup():
     execute(setup_python)
     execute(setup_git)
     execute(setup_riot_build_tools)
-    execute(riotam.setup)
+    execute(rapstore.setup)
 
 
 GITHUB_RSA_KEY = (

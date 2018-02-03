@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 """Rapstore
 
-Project repository: https://github.com/riot-appstore/riotam
+Project repository: https://github.com/riot-appstore/rapstore
 """
 
 
@@ -55,17 +55,17 @@ def setup_www_data():
 def setup_apache():
     """Setup apache server."""
     site = '000-default.conf'
-    riotamconf = '/etc/apache2/sites-available/%s' % site
+    rapstore_conf = '/etc/apache2/sites-available/%s' % site
 
     common.apt_install('apache2')
     sudo('a2enmod cgi')
 
-    put(common.template('riotam/apache2/%s' % site), config.RIOTAM_WEBSITE_ROOT, use_sudo=True)
-    sed(riotamconf, 'DOCUMENT_ROOT', config.RIOTAM_WEBSITE_DOCUMENT_ROOT, use_sudo=True)
-    sed(riotamconf, 'RESOURCES_ROOT', config.RIOTAM_WEBSITE_ROOT, use_sudo=True)
+    put(common.template('rapstore/apache2/%s' % site), config.RAPSTORE_WEBSITE_ROOT, use_sudo=True)
+    sed(rapstore_conf, 'DOCUMENT_ROOT', config.RAPSTORE_WEBSITE_DOCUMENT_ROOT, use_sudo=True)
+    sed(rapstore_conf, 'RESOURCES_ROOT', config.RAPSTORE_WEBSITE_ROOT, use_sudo=True)
     sudo('a2ensite %s' % site)
 
-    execute(setup_riotam)
+    execute(setup_rapstore)
     execute(setup_database)
     execute(update_database)
 
@@ -73,24 +73,24 @@ def setup_apache():
 
 
 @task
-def setup_riotam():
+def setup_rapstore():
     """Setup RIOT AM application."""
-    _setup_riotam_website_repository()
-    _setup_riotam_backend()
+    _setup_rapstore_website_repository()
+    _setup_rapstore_backend()
 
 
-def _setup_riotam_website_repository(directory=config.RIOTAM_WEBSITE_ROOT, version='master'):
+def _setup_rapstore_website_repository(directory=config.RAPSTORE_WEBSITE_ROOT, version='master'):
     """Clone website."""
-    common.clone_repo(config.RIOTAM_WEBSITE_REPO, directory, version, run_as_user='www-data')
+    common.clone_repo(config.RAPSTORE_WEBSITE_REPO, directory, version, run_as_user='www-data')
 
     # setup config file with password
-    path_to_config = os.path.join(directory, 'riotam_website', 'config')
+    path_to_config = os.path.join(directory, 'rapstore_website', 'config')
     config_file = os.path.join(path_to_config, 'config.py')
     sudo('cp {src} {dst}'.format(src=os.path.join(path_to_config, 'config_EXAMPLE.py'),
                                  dst=config_file))
 
     # replace password in config file inline
-    common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file, 'PASSWORD_WEBSITE', config.RAPSTORE_WEBSITE_DB_PASSWORD)
     common.replace_word_in_file(config_file, 'YOUR_SECRET_KEY', config.GITHUB_SECRET_KEY)
 
     writeable_dirs = ['log']
@@ -107,36 +107,36 @@ def _setup_riotam_website_repository(directory=config.RIOTAM_WEBSITE_ROOT, versi
     sudo('chown www-data:www-data %s' % path_website_key)
 
 
-def _setup_riotam_backend(directory=config.RIOTAM_BACKEND, version='master'):
+def _setup_rapstore_backend(directory=config.RAPSTORE_BACKEND, version='master'):
     """Clone backend which clones RIOT.
 
     Setup write permissions on required directories.
     """
-    common.clone_repo(config.RIOTAM_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
+    common.clone_repo(config.RAPSTORE_BACKEND_REPO, directory, version, '--recursive', run_as_user='www-data')
     sudo('chmod -R g-w %s' % directory)  # TODO: fixup in the repository
 
     # setup config file with password
-    config_file_config = os.path.join(os.path.join(directory, 'riotam_backend', 'config', 'config.py'))
-    config_file_setup = os.path.join(os.path.join(directory, 'riotam_backend', 'setup', 'db_config.py'))
+    config_file_config = os.path.join(os.path.join(directory, 'rapstore_backend', 'config', 'config.py'))
+    config_file_setup = os.path.join(os.path.join(directory, 'rapstore_backend', 'setup', 'db_config.py'))
 
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'riotam_backend', 'config', 'config_EXAMPLE.py'),
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'rapstore_backend', 'config', 'config_EXAMPLE.py'),
                                  dst=config_file_config))
 
-    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'riotam_backend', 'setup', 'db_config_EXAMPLE.py'),
+    sudo('cp {src} {dst}'.format(src=os.path.join(directory, 'rapstore_backend', 'setup', 'db_config_EXAMPLE.py'),
                                  dst=config_file_setup))
 
     # replace password in config file inline
-    common.replace_word_in_file(config_file_config, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
-    common.replace_word_in_file(config_file_config, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file_config, 'PASSWORD_BACKEND', config.RAPSTORE_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_config, 'PASSWORD_WEBSITE', config.RAPSTORE_WEBSITE_DB_PASSWORD)
 
-    common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RIOTAM_BACKEND_DB_PASSWORD)
-    common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RIOTAM_WEBSITE_DB_PASSWORD)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_BACKEND', config.RAPSTORE_BACKEND_DB_PASSWORD)
+    common.replace_word_in_file(config_file_setup, 'PASSWORD_WEBSITE', config.RAPSTORE_WEBSITE_DB_PASSWORD)
 
     common.replace_word_in_file(config_file_setup, 'USER_PRIVILEGED', config.DB_USER)
     common.replace_word_in_file(config_file_setup, 'PASSWORD_PRIVILEGED', config.DB_PASSWORD)
 
-    _setup_riot_stripped(os.path.join(directory, 'riotam_backend'))
-    _setup_riotam_backend_writeable_directories(directory)
+    _setup_riot_stripped(os.path.join(directory, 'rapstore_backend'))
+    _setup_rapstore_backend_writeable_directories(directory)
 
 
 def _setup_riot_stripped(directory):
@@ -145,10 +145,10 @@ def _setup_riot_stripped(directory):
         sudo('python strip_riot_repo.py')
 
 
-def _setup_riotam_backend_writeable_directories(directory):
+def _setup_rapstore_backend_writeable_directories(directory):
     """Setup the writeable directories required by the backend."""
     # TODO set this configurable somehow
-    writeable_dirs = ['tmp', 'log', 'RIOT/generated_by_riotam']
+    writeable_dirs = ['tmp', 'log', 'RIOT/generated_by_rapstore']
     with cd(directory):
         dirs = ' '.join(writeable_dirs)
         sudo('mkdir -p %s' % dirs)
@@ -164,7 +164,7 @@ def setup_database():
     common.apt_install('mysql-server')
 
     # Scripts expects to be run from the setup directory
-    with cd(os.path.join(config.RIOTAM_BACKEND, 'riotam_backend', 'setup')):
+    with cd(os.path.join(config.RAPSTORE_BACKEND, 'rapstore_backend', 'setup')):
 
         sudo('python %s' % 'db_create.py')
         sudo('python %s' % 'db_setup.py')
@@ -173,5 +173,5 @@ def setup_database():
 @task
 def update_database():
     """Update database with RIOT information."""
-    with cd(os.path.join(config.RIOTAM_BACKEND, 'riotam_backend', 'tasks', 'database')):
+    with cd(os.path.join(config.RAPSTORE_BACKEND, 'rapstore_backend', 'tasks', 'database')):
         sudo('python %s' % 'db_update.py')

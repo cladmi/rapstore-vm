@@ -13,14 +13,14 @@ WWW_HOME = '/var/www'
 
 GITHUB_SECRET_KEY = 'SECRET_KEY'
 
-RIOTAM_WEBSITE_ROOT = os.path.join(WWW_HOME, 'riotam-website')
-RIOTAM_WEBSITE_DOCUMENT_ROOT = os.path.join(RIOTAM_WEBSITE_ROOT, 'riotam_website')
-RIOTAM_WEBSITE_REPO = 'https://github.com/HendrikVE/riotam-website'
-RIOTAM_WEBSITE_DB_PASSWORD = 'PASSWORD_WEBSITE'
+RAPSTORE_WEBSITE_ROOT = os.path.join(WWW_HOME, 'rapstore-website')
+RAPSTORE_WEBSITE_DOCUMENT_ROOT = os.path.join(RAPSTORE_WEBSITE_ROOT, 'rapstore_website')
+RAPSTORE_WEBSITE_REPO = 'https://github.com/HendrikVE/rapstore-website'
+RAPSTORE_WEBSITE_DB_PASSWORD = 'PASSWORD_WEBSITE'
 
-RIOTAM_BACKEND = os.path.join(WWW_HOME, 'riotam-backend')
-RIOTAM_BACKEND_REPO = 'https://github.com/HendrikVE/riotam-backend'
-RIOTAM_BACKEND_DB_PASSWORD = 'PASSWORD_BACKEND'
+RAPSTORE_BACKEND = os.path.join(WWW_HOME, 'rapstore-backend')
+RAPSTORE_BACKEND_REPO = 'https://github.com/HendrikVE/rapstore-backend'
+RAPSTORE_BACKEND_DB_PASSWORD = 'PASSWORD_BACKEND'
 
 DB_USER = 'root'
 DB_PASSWORD = 'PASSWORD_DB_ROOT'
