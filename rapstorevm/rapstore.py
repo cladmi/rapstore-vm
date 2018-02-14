@@ -33,6 +33,9 @@ def setup():
     execute(setup_apache)
     execute(setup_www_data)
 
+    # Debugging library
+    run('pip install q')
+
 
 GITCONFIG = '''\
 [user]
