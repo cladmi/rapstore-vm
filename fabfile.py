@@ -33,6 +33,7 @@ def setup():
     execute(setup_known_hosts)
     execute(setup_python)
     execute(setup_git)
+    execute(setup_docker)
     execute(setup_riot_build_tools)
     execute(rapstore.setup)
 
@@ -75,6 +76,11 @@ def setup_git():
     """Install git."""
     common.apt_install('git')
 
+@task
+def setup_docker():
+    """Install Docker."""
+    common.apt_install('docker')
+    common.apt_install('docker-compose')
 
 @task
 def setup_riot_build_tools():
