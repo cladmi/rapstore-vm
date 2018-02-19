@@ -37,6 +37,12 @@ def setup():
     execute(setup_riot_build_tools)
     execute(rapstore.setup)
 
+@task
+def clone_docker():
+    execute(rapstore.setup_www_data)
+    with cd('/var/www'):
+        common.clone_repo(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', 'master', '', run_as_user='www-data')
+
 
 GITHUB_RSA_KEY = (
     'AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYP'
