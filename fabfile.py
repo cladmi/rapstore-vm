@@ -38,10 +38,14 @@ def setup():
     execute(rapstore.setup)
 
 @task
-def clone_docker():
+def deploy_docker():
     execute(rapstore.setup_www_data)
-    with cd('/var/www'):
-        common.clone_repo(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', 'master', '', run_as_user='www-data')
+    with cd(config.WWW_HOME):
+        common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', 'master', '', run_as_user='www-data')
+
+    with cd(config.RAPSTORE_DJANGO):
+        common.docker_refresh('install/docker-compose.yml')
+
 
 
 GITHUB_RSA_KEY = (
