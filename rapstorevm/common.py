@@ -40,6 +40,9 @@ def clone_repo(repo, directory='', branch='master', options='', run_as_user=None
     cmd = 'git clone {options} --quiet {repo} --branch {branch} {dir}'.format(repo=repo, branch=branch, dir=directory, options=options)
     sudo(cmd, user=run_as_user)
 
+def pull_or_clone(repo, directory='', branch='master', options='', run_as_user=None):
+    cmd = 'git -C {dir} pull --quiet 2>/dev/null || git clone {options} --quiet {repo} --branch {branch} {dir}'.format(repo=repo, branch=branch, dir=directory, options=options)
+    sudo(cmd, user=run_as_user)
 
 def replace_word_in_file(file, original, replacement):
     """Replace a pattern with another word, using sed"""
