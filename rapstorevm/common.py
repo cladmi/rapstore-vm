@@ -55,3 +55,6 @@ def docker_refresh():
     sudo('docker-compose rm --force')
     sudo('docker-compose build')
     sudo('docker-compose up')
+
+def docker_shell(container, command):
+    sudo('docker-compose exec {container} {command}'.format(container=container, command=command))

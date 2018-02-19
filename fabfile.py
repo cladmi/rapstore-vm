@@ -47,7 +47,6 @@ def deploy_docker():
         common.docker_refresh()
 
 
-
 GITHUB_RSA_KEY = (
     'AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYP'
     'CPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNl'
