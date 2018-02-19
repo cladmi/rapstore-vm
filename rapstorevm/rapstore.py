@@ -62,6 +62,7 @@ def setup_apache():
 
     common.apt_install('apache2')
     sudo('a2enmod cgi')
+    sudo('a2enmod proxy_http')
 
     put(common.template('rapstore/apache2/%s' % site), config.RAPSTORE_WEBSITE_ROOT, use_sudo=True)
     sed(rapstore_conf, 'DOCUMENT_ROOT', config.RAPSTORE_WEBSITE_DOCUMENT_ROOT, use_sudo=True)
