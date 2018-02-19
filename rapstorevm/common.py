@@ -51,10 +51,10 @@ def replace_word_in_file(file, original, replacement):
                                                                file=file))
 
 def docker_refresh():
-    sudo('docker-compose  stop || true')
+    sudo('docker-compose stop || true')
     sudo('docker-compose rm --force')
     sudo('docker-compose build')
-    sudo('docker-compose up')
+    sudo('docker-compose up -d')
 
 def docker_shell(container, command):
     sudo('docker-compose exec {container} {command}'.format(container=container, command=command))

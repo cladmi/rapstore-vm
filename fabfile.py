@@ -52,6 +52,12 @@ def create_superuser():
         run('echo "Creating superusers"')
         common.docker_shell('web', 'python manage.py createsuperuser')
 
+@task
+def populate_db():
+    with cd(config.RAPSTORE_DJANGO):
+        run('echo "Populating DB"')
+        common.docker_shell('web', 'python manage.py populate_db')
+
 
 GITHUB_RSA_KEY = (
     'AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYP'
