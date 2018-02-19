@@ -44,7 +44,7 @@ def deploy_docker():
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', 'master', '', run_as_user='www-data')
 
     with cd(config.RAPSTORE_DJANGO):
-        common.docker_refresh('install/docker-compose.yml')
+        common.docker_refresh()
 
 
 

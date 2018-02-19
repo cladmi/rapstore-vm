@@ -50,7 +50,8 @@ def replace_word_in_file(file, original, replacement):
                                                                replacement=replacement,
                                                                file=file))
 
-def docker_refresh(compose_file):
-    sudo('docker-compose -f {compose_file} stop || true'.format(compose_file=compose_file))
-    sudo('docker-compose -f {compose_file} build'.format(compose_file=compose_file))
-    sudo('docker-compose -f {compose_file} up'.format(compose_file=compose_file))
+def docker_refresh():
+    sudo('docker-compose  stop || true')
+    sudo('docker-compose rm --force')
+    sudo('docker-compose build')
+    sudo('docker-compose up')
