@@ -22,5 +22,8 @@ RAPSTORE_BACKEND = os.path.join(WWW_HOME, 'rapstore-backend')
 RAPSTORE_BACKEND_REPO = 'https://github.com/HendrikVE/rapstore-backend'
 RAPSTORE_BACKEND_DB_PASSWORD = 'PASSWORD_BACKEND'
 
+RAPSTORE_DJANGO = os.path.join(WWW_HOME, 'rapstore-django')
+RAPSTORE_DJANGO_REPO = 'https://github.com/riot-appstore/rapstore-django'
+
 DB_USER = 'root'
 DB_PASSWORD = 'PASSWORD_DB_ROOT'
