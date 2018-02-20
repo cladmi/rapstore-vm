@@ -9,6 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 
 
 import os.path
+import os
 from fabric.api import env, task, execute
 from fabric.api import run, sudo
 from fabric.contrib.files import append
@@ -38,10 +39,16 @@ def setup():
     execute(rapstore.setup)
 
 @task
-def deploy_docker():
+def pull_or_clone_django():
+    env_branch=os.environ.get('BRANCH')
+    branch= env_branch if env_branch is not None else 'master'
     execute(rapstore.setup_www_data)
     with cd(config.WWW_HOME):
-        common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', 'master', '', run_as_user='www-data')
+        common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch, '', run_as_user='www-data')
+
+@task
+def deploy_docker():
+    execute(pull_or_clone_django)
 
     with cd(config.RAPSTORE_DJANGO):
         common.docker_refresh()
