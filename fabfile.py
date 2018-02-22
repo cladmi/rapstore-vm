@@ -20,6 +20,9 @@ from rapstorevm import common
 from rapstorevm import rapstore
 from rapstorevm.config import server_config as config
 
+# Make 'builder' tasks visible here
+from rapstorevm import builder
+
 
 OPTBASHRC = '/opt/bashrc'
 
@@ -37,6 +40,7 @@ def setup():
     execute(setup_docker)
     execute(setup_riot_build_tools)
     execute(rapstore.setup)
+    execute(builder.setup)
 
 @task
 def pull_or_clone_django():
