@@ -23,6 +23,9 @@ from rapstorevm.config import server_config as config
 # Make 'builder' tasks visible here
 from rapstorevm import builder
 
+# Disable warnings for 'cd'
+# pylint:disable=not-context-manager
+
 
 OPTBASHRC = '/opt/bashrc'
 
