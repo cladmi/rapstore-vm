@@ -111,6 +111,17 @@ def _setup_rapstore_website_repository(directory=config.RAPSTORE_WEBSITE_ROOT, v
     sudo('chown www-data:www-data %s' % path_website_key)
 
 
+def _deploy_rapstore(branch_name, docker_compose):
+    execute(setup_www_data)
+    folder=os.path.join(config.WWW_HOME,branch_name)
+    sudo('mkdir -p %s' % folder)
+    sudo('chown www-data %s' % folder)
+    with cd(folder):
+        put(docker_compose, os.path.join(folder, "docker-compose.yml"), use_sudo=True)
+        common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch_name, '', run_as_user='www-data')
+        common.docker_refresh()
+
+
 def _setup_rapstore_backend(directory=config.RAPSTORE_BACKEND, version='master'):
     """Clone backend which clones RIOT.
 
