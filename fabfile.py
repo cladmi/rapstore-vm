@@ -61,6 +61,20 @@ def deploy_docker():
         common.docker_refresh()
 
 @task
+def deploy_prod():
+    rapstore._deploy_rapstore('master', 'docker-compose.yml')
+
+@task
+def deploy_staging():
+    rapstore._deploy_rapstore('staging', 'docker-compose.staging.yml')
+    pass
+
+@task
+def deploy_dev():
+    rapstore._deploy_rapstore('develop', 'docker-compose.dev.yml')
+    pass
+
+@task
 def create_superuser():
     with cd(config.RAPSTORE_DJANGO):
         run('echo "Creating superusers"')

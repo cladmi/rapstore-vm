@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+  web:
+    build: 
+        context: ./rapstore-django/django
+        dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
+    volumes:
+        - ./rapstore-django/django:/code
+    depends_on:
+      - db
