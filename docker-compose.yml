@@ -13,3 +13,11 @@ services:
         - ./rapstore-django/django:/code
     depends_on:
       - db
+  frontend:
+    build: 
+        context: ./rapstore-django/rapstore-frontend
+        dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    volumes:
+        - ./rapstore-django/rapstore-frontend:/app
