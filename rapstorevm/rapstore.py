@@ -132,6 +132,31 @@ def _deploy_rapstore(branch_name, docker_compose, folder_name=None):
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch_name, '', run_as_user='www-data')
         common.docker_refresh()
 
+def _populate_db(folder_name):
+    folder=os.path.join(config.WWW_HOME,folder_name)
+    with cd(folder):
+        sudo('docker-compose exec web python manage.py populate_db')
+
+def _createsuperuser(folder_name):
+    folder=os.path.join(config.WWW_HOME,folder_name)
+    with cd(folder):
+        sudo('docker-compose exec web python manage.py createsuperuser')
+
+
+def _validate_folder(folder_name):
+    if folder_name not in ["develop", "master", "staging"]:
+        return False
+    return True
+
+@task
+def populate_db(folder="develop"):
+    if(_validate_folder(folder)):
+        _populate_db(folder)
+
+@task
+def createsuperuser(folder="develop"):
+    if(_validate_folder(folder)):
+        _createsuperuser(folder)
 
 def _setup_rapstore_backend(directory=config.RAPSTORE_BACKEND, version='master'):
     """Clone backend which clones RIOT.
