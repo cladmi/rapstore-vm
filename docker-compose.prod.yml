@@ -11,5 +11,26 @@ services:
       - "8002:8000"
     volumes:
         - ./rapstore-django/django:/code
+        - applications:/apps
     depends_on:
       - db
+  frontend:
+    build: 
+        context: ./rapstore-django/rapstore-frontend
+        dockerfile: Dockerfile
+    ports:
+      - "4202:4200"
+    volumes:
+        - ./rapstore-django/rapstore-frontend:/app
+        - /app/node_modules
+  builder:
+    build:
+        context: ./rapstore-django/builder
+        dockerfile: Dockerfile
+    command: bash -c "chmod +x /code/docker-entry.sh && /code/docker-entry.sh"
+    volumes:
+      - ./rapstore-django/builder:/code
+    depends_on:
+      - db
+volumes:
+    applications:
