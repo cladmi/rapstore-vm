@@ -62,7 +62,7 @@ def deploy_docker():
 
 @task
 def deploy_prod():
-    rapstore._deploy_rapstore('master', 'docker-compose.yml')
+    rapstore._deploy_rapstore('master', 'docker-compose.prod.yml')
 
 @task
 def deploy_staging():
