@@ -55,6 +55,16 @@ def setup_www_data():
 
 
 @task
+def setup_nginx():
+    put("nginx", "/var/www", use_sudo=True)
+    sudo('chown -R www-data:www-data /var/www')
+    with cd("/var/www/nginx"):
+        sudo('docker stop nginx || true')
+        sudo('docker rm nginx || true')
+        sudo('docker build -t nginx .')
+        sudo('docker run -d --net=host --name nginx -t nginx')
+
+@task
 def setup_apache():
     """Setup apache server."""
     site = '000-default.conf'
