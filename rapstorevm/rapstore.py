@@ -121,9 +121,10 @@ def _setup_rapstore_website_repository(directory=config.RAPSTORE_WEBSITE_ROOT, v
     sudo('chown www-data:www-data %s' % path_website_key)
 
 
-def _deploy_rapstore(branch_name, docker_compose):
+def _deploy_rapstore(branch_name, docker_compose, folder_name=None):
     execute(setup_www_data)
-    folder=os.path.join(config.WWW_HOME,branch_name)
+    folder_name = folder_name if folder_name else branch_name
+    folder=os.path.join(config.WWW_HOME,folder_name)
     sudo('mkdir -p %s' % folder)
     sudo('chown www-data %s' % folder)
     with cd(folder):
