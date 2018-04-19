@@ -18,7 +18,7 @@ services:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-    command: ng serve --host=0.0.0.0
+    command: ng serve --host=0.0.0.0 --env=develop
     ports:
       - "4200:4200"
     volumes:
