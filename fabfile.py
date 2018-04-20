@@ -62,16 +62,16 @@ def deploy_docker():
 
 @task
 def deploy_prod():
-    rapstore._deploy_rapstore('master', 'docker-compose.prod.yml')
+    rapstore._deploy_rapstore('master', '.env.prod')
 
 @task
 def deploy_staging():
-    rapstore._deploy_rapstore('master', 'docker-compose.staging.yml', folder_name='staging')
+    rapstore._deploy_rapstore('master', '.env.staging', folder_name='staging')
     pass
 
 @task
 def deploy_dev(branch):
-    rapstore._deploy_rapstore(branch, 'docker-compose.dev.yml', folder_name='develop')
+    rapstore._deploy_rapstore(branch, '.env.dev', folder_name='develop')
     pass
 
 @task
