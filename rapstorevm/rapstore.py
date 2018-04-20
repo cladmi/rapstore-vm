@@ -121,16 +121,17 @@ def _setup_rapstore_website_repository(directory=config.RAPSTORE_WEBSITE_ROOT, v
     sudo('chown www-data:www-data %s' % path_website_key)
 
 
-def _deploy_rapstore(branch_name, docker_compose, folder_name=None):
+def _deploy_rapstore(branch_name, docker_compose, folder_name=None, dirty=None):
     execute(setup_www_data)
     folder_name = folder_name if folder_name else branch_name
     folder=os.path.join(config.WWW_HOME,folder_name)
     sudo('mkdir -p %s' % folder)
     sudo('chown www-data %s' % folder)
     with cd(folder):
-        put(docker_compose, os.path.join(folder, "docker-compose.yml"), use_sudo=True)
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch_name, '', run_as_user='www-data')
-        common.docker_refresh()
+        if not dirty:
+            put(docker_compose, os.path.join(folder, "docker-compose.yml"), use_sudo=True)
+            common.docker_refresh()
 
 def _populate_db(folder_name):
     folder=os.path.join(config.WWW_HOME,folder_name)
