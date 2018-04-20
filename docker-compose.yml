@@ -8,7 +8,7 @@ services:
         context: ./rapstore-django/django
         dockerfile: Dockerfile
     ports:
-      - "8080:8000"
+      - "${BPORT}:8000"
     volumes:
         - ./rapstore-django/django:/code
         - applications:/apps
@@ -18,9 +18,9 @@ services:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-    command: ng serve --host=0.0.0.0
+    command: ng serve --host=0.0.0.0 ${AFLAGS}
     ports:
-      - "4200:4200"
+      - "${FPORT}:4200"
     volumes:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
