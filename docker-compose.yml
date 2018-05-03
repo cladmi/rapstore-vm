@@ -39,4 +39,3 @@ services:
       - db
 volumes:
     applications:
-    postgres-data:
