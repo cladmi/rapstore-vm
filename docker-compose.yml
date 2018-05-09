@@ -16,6 +16,7 @@ services:
     volumes:
         - ./rapstore-django/django:/code
         - applications:/apps
+        - riot:/RIOT
     depends_on:
       - db
   frontend:
@@ -35,7 +36,9 @@ services:
     command: bash -c "chmod +x /code/docker-entry.sh && /code/docker-entry.sh"
     volumes:
       - ./rapstore-django/builder:/code
+      - riot:/RIOT
     depends_on:
       - db
 volumes:
     applications:
+    riot:
