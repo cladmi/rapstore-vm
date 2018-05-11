@@ -10,7 +10,8 @@ services:
         context: ./rapstore-django/django
         dockerfile: Dockerfile
     environment:
-      - GITHUB_OAUTH
+      - GITHUB_CLIENT_ID
+      - GITHUB_SECRET_KEY
     ports:
       - "${BPORT}:8000"
     volumes:
