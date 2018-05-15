@@ -1,0 +1,5 @@
+version: '3'
+
+services:
+  web:
+    command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && python manage.py runserver 0.0.0.0:8000"
