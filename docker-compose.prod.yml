@@ -17,12 +17,14 @@ services:
       - "${FPORT}:4200"
     volumes:
         - static:/static
+        - dist:/dist
   frontend:
     volumes:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
-        - /dist
+        - dist:/dist
 volumes:
     applications:
     riot:
     static:
+    dist:
