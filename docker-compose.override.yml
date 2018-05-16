@@ -12,6 +12,9 @@ services:
   frontend:
     ports:
       - "${FPORT}:4200"
+    volumes:
+        - ./rapstore-django/rapstore-frontend:/app
+        - /app/node_modules
 volumes:
     applications:
     riot:
