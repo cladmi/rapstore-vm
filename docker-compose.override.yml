@@ -15,6 +15,7 @@ services:
     volumes:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
+    command: ng serve --host=0.0.0.0 ${AFLAGS}
 volumes:
     applications:
     riot:

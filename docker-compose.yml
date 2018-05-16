@@ -18,7 +18,6 @@ services:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-    command: ng serve --host=0.0.0.0 ${AFLAGS}
   builder:
     build:
         context: ./rapstore-django/builder
