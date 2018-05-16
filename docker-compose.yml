@@ -12,10 +12,6 @@ services:
     environment:
       - GITHUB_CLIENT_ID
       - GITHUB_SECRET_KEY
-    volumes:
-        - ./rapstore-django/django:/code
-        - applications:/apps
-        - riot:/RIOT
     depends_on:
       - db
   frontend:
@@ -36,6 +32,3 @@ services:
       - riot:/RIOT
     depends_on:
       - db
-volumes:
-    applications:
-    riot:

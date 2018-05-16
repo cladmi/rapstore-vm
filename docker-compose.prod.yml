@@ -3,3 +3,19 @@ version: '3'
 services:
   web:
     command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && uwsgi --http :8000 --chdir /code -w riot_apps.wsgi"
+    volumes:
+        - ./rapstore-django/django:/code
+        - applications:/apps
+        - riot:/RIOT
+        - static:/static
+  nginx:
+    build: 
+        context: ./rapstore-django/prod
+        dockerfile: Dockerfile
+    ports:
+      - "${BPORT}:8000"
+      - "${FPORT}:4200"
+volumes:
+    applications:
+    riot:
+    static:
