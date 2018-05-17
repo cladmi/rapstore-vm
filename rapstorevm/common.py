@@ -40,9 +40,11 @@ def clone_repo(repo, directory='', branch='master', options='', run_as_user=None
     cmd = 'git clone {options} --quiet {repo} --branch {branch} {dir}'.format(repo=repo, branch=branch, dir=directory, options=options)
     sudo(cmd, user=run_as_user)
 
+
 def pull_or_clone(repo, directory='', branch='master', options='', run_as_user=None):
     cmd = 'git clone {options} --quiet {repo} --branch {branch} {dir} || git -C {dir} fetch origin && git -C {dir} checkout {branch} 2>/dev/null && git -C {dir} merge origin/{branch} --quiet 2>/dev/null'.format(repo=repo, branch=branch, dir=directory, options=options)
     sudo(cmd, user=run_as_user)
+
 
 def replace_word_in_file(file, original, replacement):
     """Replace a pattern with another word, using sed"""
@@ -50,11 +52,13 @@ def replace_word_in_file(file, original, replacement):
                                                                replacement=replacement,
                                                                file=file))
 
+
 def docker_refresh():
     sudo('docker-compose stop || true')
     sudo('docker-compose rm --force')
     sudo('docker-compose build')
     sudo('docker-compose up -d')
+
 
 def docker_shell(container, command):
     sudo('docker-compose exec {container} {command}'.format(container=container, command=command))
