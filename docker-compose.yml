@@ -12,6 +12,7 @@ services:
     environment:
       - GITHUB_CLIENT_ID
       - GITHUB_SECRET_KEY
+      - DEBUG
     depends_on:
       - db
   frontend:
@@ -27,3 +28,5 @@ services:
       - riot:/RIOT
     depends_on:
       - db
+    environment:
+      - DEBUG
