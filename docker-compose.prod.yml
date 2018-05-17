@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  web:
+    command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && uwsgi --ini wsgi.ini"
+    volumes:
+        - ./rapstore-django/django:/code
+        - applications:/apps
+        - riot:/RIOT
+        - static:/static
+  nginx:
+    build: 
+        context: ./rapstore-django/prod
+        dockerfile: Dockerfile
+    ports:
+      - "${BPORT}:8000"
+      - "${FPORT}:4200"
+    volumes:
+        - static:/static
+        - dist:/dist
+    depends_on:
+      - frontend
+      - web
+  frontend:
+    volumes:
+        - ./rapstore-django/rapstore-frontend:/app
+        - /app/node_modules
+        - dist:/dist
+    command: bash -c "ng build --prod --aot=false ${AFLAGS}"
+  builder:
+    command: bash -c "sleep 5 && python manage.py migrate && uwsgi --ini wsgi.ini"
+volumes:
+    applications:
+    riot:
+    static:
+    dist:

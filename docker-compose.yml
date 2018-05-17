@@ -12,34 +12,23 @@ services:
     environment:
       - GITHUB_CLIENT_ID
       - GITHUB_SECRET_KEY
-    ports:
-      - "${BPORT}:8000"
-    volumes:
-        - ./rapstore-django/django:/code
-        - applications:/apps
-        - riot:/RIOT
+      - DEBUG
+      - SECRET_KEY
     depends_on:
       - db
   frontend:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-    command: ng serve --host=0.0.0.0 ${AFLAGS}
-    ports:
-      - "${FPORT}:4200"
-    volumes:
-        - ./rapstore-django/rapstore-frontend:/app
-        - /app/node_modules
   builder:
     build:
         context: ./rapstore-django/builder
         dockerfile: Dockerfile
-    command: bash -c "chmod +x /code/docker-entry.sh && /code/docker-entry.sh"
     volumes:
       - ./rapstore-django/builder:/code
       - riot:/RIOT
     depends_on:
       - db
-volumes:
-    applications:
-    riot:
+    environment:
+      - DEBUG
+      - SECRET_KEY
