@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py collectstatic --noinput && sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && python manage.py runserver 0.0.0.0:8000"
     volumes:
         - ./rapstore-django/django:/code
         - applications:/apps
@@ -17,7 +17,7 @@ services:
         - /app/node_modules
     command: ng serve --host=0.0.0.0 ${AFLAGS}
   builder:
-    command: bash -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py collectstatic --noinput && sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 volumes:
     applications:
     riot:
