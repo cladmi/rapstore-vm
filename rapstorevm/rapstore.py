@@ -60,10 +60,12 @@ def setup_nginx():
     put("nginx", "/var/www", use_sudo=True)
     sudo('chown -R www-data:www-data /var/www')
     with cd("/var/www/nginx"):
+        sudo('cp /etc/letsencrypt/live/demo.riot-apps.net/$(readlink /etc/letsencrypt/live/demo.riot-apps.net/fullchain.pem) /home/root/ssl/fullchain.pem')
+        sudo('cp /etc/letsencrypt/live/demo.riot-apps.net/$(readlink /etc/letsencrypt/live/demo.riot-apps.net/privkey.pem) /home/root/ssl/privkey.pem')
         sudo('docker stop nginx || true')
         sudo('docker rm nginx || true')
         sudo('docker build -t nginx .')
-        sudo('docker run -d --net=host --name nginx -t nginx')
+        sudo('docker run -d -v /home/root/ssl:/etc/nginx/certs --net=host --name nginx -t nginx')
 
 @task
 def setup_apache():
