@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && uwsgi --http :8000 --chdir /code -w riot_apps.wsgi"
+    command: bash -c "sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && uwsgi --ini wsgi.ini"
     volumes:
         - ./rapstore-django/django:/code
         - applications:/apps
@@ -28,7 +28,7 @@ services:
         - dist:/dist
     command: bash -c "ng build --prod --aot=false ${AFLAGS}"
   builder:
-    command: bash -c "sleep 5 && python manage.py migrate && uwsgi --http :8000 --chdir /code -w builder.wsgi"
+    command: bash -c "sleep 5 && python manage.py migrate && uwsgi --ini wsgi.ini"
 volumes:
     applications:
     riot:
