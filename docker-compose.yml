@@ -13,6 +13,7 @@ services:
       - GITHUB_CLIENT_ID
       - GITHUB_SECRET_KEY
       - DEBUG
+      - SECRET_KEY
     depends_on:
       - db
   frontend:
@@ -30,3 +31,4 @@ services:
       - db
     environment:
       - DEBUG
+      - SECRET_KEY
