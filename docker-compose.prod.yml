@@ -18,11 +18,15 @@ services:
     volumes:
         - static:/static
         - dist:/dist
+    depends_on:
+      - frontend
+      - web
   frontend:
     volumes:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
         - dist:/dist
+    command: bash -c "ng build --aot=false ${AFLAGS}"
 volumes:
     applications:
     riot:
