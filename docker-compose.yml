@@ -22,7 +22,6 @@ services:
     build:
         context: ./rapstore-django/builder
         dockerfile: Dockerfile
-    command: bash -c "chmod +x /code/docker-entry.sh && /code/docker-entry.sh"
     volumes:
       - ./rapstore-django/builder:/code
       - riot:/RIOT

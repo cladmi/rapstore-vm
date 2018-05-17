@@ -27,6 +27,8 @@ services:
         - /app/node_modules
         - dist:/dist
     command: bash -c "ng build --aot=false ${AFLAGS}"
+  builder:
+    command: bash -c "sleep 5 && python manage.py migrate && uwsgi --http :8000 --chdir /code -w builder.wsgi"
 volumes:
     applications:
     riot:
