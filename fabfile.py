@@ -41,7 +41,6 @@ def setup():
     execute(setup_git)
     execute(setup_docker)
     execute(setup_riot_build_tools)
-    execute(rapstore.setup)
     execute(builder.setup)
 
 
