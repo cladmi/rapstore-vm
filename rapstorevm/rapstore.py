@@ -39,8 +39,10 @@ def setup_www_data():
 
 @task
 def setup_nginx():
+
     put("nginx", "/var/www", use_sudo=True)
     sudo('chown -R www-data:www-data /var/www')
+
     with cd("/var/www/nginx"):
         sudo('cp /etc/letsencrypt/live/demo.riot-apps.net/$(readlink /etc/letsencrypt/live/demo.riot-apps.net/fullchain.pem) /home/root/ssl/fullchain.pem')
         sudo('cp /etc/letsencrypt/live/demo.riot-apps.net/$(readlink /etc/letsencrypt/live/demo.riot-apps.net/privkey.pem) /home/root/ssl/privkey.pem')
@@ -51,11 +53,13 @@ def setup_nginx():
 
 
 def _deploy_rapstore(branch_name, env_file, folder_name=None, dirty=None):
+
     execute(setup_www_data)
     folder_name = folder_name if folder_name else branch_name
-    folder=os.path.join(config.WWW_HOME,folder_name)
+    folder = os.path.join(config.WWW_HOME,folder_name)
     sudo('mkdir -p %s' % folder)
     sudo('chown www-data %s' % folder)
+
     with cd(folder):
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch_name, '', run_as_user='www-data')
         if not dirty:
@@ -66,30 +70,38 @@ def _deploy_rapstore(branch_name, env_file, folder_name=None, dirty=None):
 
 
 def _populate_db(folder_name):
-    folder=os.path.join(config.WWW_HOME,folder_name)
+
+    folder = os.path.join(config.WWW_HOME,folder_name)
+
     with cd(folder):
         sudo('docker-compose exec web python manage.py populate_db')
 
 
 def _createsuperuser(folder_name):
+
     folder=os.path.join(config.WWW_HOME,folder_name)
+
     with cd(folder):
         sudo('docker-compose exec web python manage.py createsuperuser')
 
 
 def _validate_folder(folder_name):
+
     if folder_name not in ["develop", "master", "staging"]:
         return False
+
     return True
 
 
 @task
 def populate_db(folder="develop"):
-    if(_validate_folder(folder)):
+
+    if _validate_folder(folder):
         _populate_db(folder)
 
 
 @task
 def createsuperuser(folder="develop"):
-    if(_validate_folder(folder)):
+
+    if _validate_folder(folder):
         _createsuperuser(folder)
