@@ -10,7 +10,7 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 import os.path
 from io import BytesIO
 
-from fabric.api import task, sudo, put, execute
+from fabric.api import run, task, sudo, put, execute
 from fabric.context_managers import cd
 
 from . import common
@@ -74,15 +74,15 @@ def _populate_db(folder_name):
     folder = os.path.join(config.WWW_HOME,folder_name)
 
     with cd(folder):
-        sudo('docker-compose exec web python manage.py populate_db')
+        common.docker_shell('web', 'python manage.py populate_db')
 
 
 def _createsuperuser(folder_name):
 
-    folder=os.path.join(config.WWW_HOME,folder_name)
+    folder = os.path.join(config.WWW_HOME,folder_name)
 
     with cd(folder):
-        sudo('docker-compose exec web python manage.py createsuperuser')
+        common.docker_shell('web', 'python manage.py createsuperuser')
 
 
 def _validate_folder(folder_name):
