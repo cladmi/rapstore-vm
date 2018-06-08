@@ -32,5 +32,21 @@ services:
     environment:
       - DEBUG
       - SECRET_KEY
+
+  redis:
+     image: redis:latest
+
+  celery:
+    build:
+        context: ./rapstore-django/celery
+        dockerfile: Dockerfile
+    command: celery worker --app=api.tasks
+    environment:
+      - DEBUG
+      - SECRET_KEY
+    volumes:
+      - ./rapstore-django/django:/code
+      - riot:/RIOT
+
 volumes:
     postgres-data:
