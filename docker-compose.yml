@@ -20,19 +20,6 @@ services:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-  builder:
-    build:
-        context: ./rapstore-django/builder
-        dockerfile: Dockerfile
-    volumes:
-      - ./rapstore-django/builder:/code
-      - riot:/RIOT
-    depends_on:
-      - db
-    environment:
-      - DEBUG
-      - SECRET_KEY
-
   redis:
      image: redis:latest
 
@@ -47,6 +34,8 @@ services:
     volumes:
       - ./rapstore-django/django:/code
       - riot:/RIOT
+      - raw:/raw
 
 volumes:
     postgres-data:
+    raw:
