@@ -26,7 +26,7 @@ services:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
         - dist:/dist
-    command: bash -c "ng build --prod --aot=false ${AFLAGS}"
+    command: bash -c "ng build --prod --aot=false --build-optimizer=false ${AFLAGS}"
 volumes:
     applications:
     riot:
