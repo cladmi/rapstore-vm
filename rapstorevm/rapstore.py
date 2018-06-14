@@ -52,8 +52,7 @@ def setup_nginx():
         sudo('docker run -d -v /home/root/ssl:/etc/nginx/certs --net=host --name nginx -t nginx')
 
 
-def _deploy_rapstore(branch_name, env_file, folder_name=None, dirty=None):
-
+def _deploy_rapstore(branch_name, env_file, folder_name=None, dirty=None, prod=False):
     execute(setup_www_data)
     folder_name = folder_name if folder_name else branch_name
     folder = os.path.join(config.WWW_HOME,folder_name)
@@ -64,6 +63,10 @@ def _deploy_rapstore(branch_name, env_file, folder_name=None, dirty=None):
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch_name, '', run_as_user='www-data')
         if not dirty:
             put('docker-compose.yml', os.path.join(folder, "docker-compose.yml"), use_sudo=True)
+            if not prod:
+                put('docker-compose.override.yml', os.path.join(folder, "docker-compose.override.yml"), use_sudo=True)
+            else:
+                put('docker-compose.prod.yml', os.path.join(folder, "docker-compose.override.yml"), use_sudo=True)
             put(env_file, os.path.join(folder, ".env"), use_sudo=True)
             sudo("cat {0}/.oauth.{1} >> .env ".format(ROOT_DIR, folder_name))
             common.docker_refresh()

@@ -4,7 +4,7 @@ services:
   db:
     image: postgres
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
   web:
     build: 
         context: ./rapstore-django/django
@@ -20,15 +20,22 @@ services:
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
-  builder:
+  redis:
+     image: redis:latest
+
+  celery:
     build:
-        context: ./rapstore-django/builder
+        context: ./rapstore-django/celery
         dockerfile: Dockerfile
-    volumes:
-      - ./rapstore-django/builder:/code
-      - riot:/RIOT
-    depends_on:
-      - db
+    command: celery worker --app=api.tasks
     environment:
       - DEBUG
       - SECRET_KEY
+    volumes:
+      - ./rapstore-django/django:/code
+      - riot:/RIOT
+      - raw:/raw
+
+volumes:
+    postgres-data:
+    raw:

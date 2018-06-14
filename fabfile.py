@@ -63,17 +63,30 @@ def deploy_docker():
 
 @task
 def deploy_prod():
-    rapstore._deploy_rapstore('master', '.env.prod')
+    rapstore._deploy_rapstore('master', '.env.prod', prod=True)
 
 
 @task
 def deploy_staging(dirty=None):
-    rapstore._deploy_rapstore('master', '.env.staging', folder_name='staging', dirty=dirty)
-
+    rapstore._deploy_rapstore('master', '.env.staging', folder_name='staging', dirty=dirty, prod=True)
+    pass
 
 @task
 def deploy_dev(branch, dirty=None):
-    rapstore._deploy_rapstore(branch, '.env.dev', folder_name='develop', dirty=dirty)
+    rapstore._deploy_rapstore(branch, '.env.dev', folder_name='develop', dirty=dirty, prod=False)
+    pass
+
+@task
+def create_superuser():
+    with cd(config.RAPSTORE_DJANGO):
+        run('echo "Creating superusers"')
+        common.docker_shell('web', 'python manage.py createsuperuser')
+
+@task
+def populate_db():
+    with cd(config.RAPSTORE_DJANGO):
+        run('echo "Populating DB"')
+        common.docker_shell('web', 'python manage.py populate_db')
 
 
 GITHUB_RSA_KEY = (
