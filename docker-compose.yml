@@ -2,10 +2,12 @@ version: '3'
 
 services:
   db:
+    restart: always
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
   web:
+    restart: always
     build: 
         context: ./rapstore-django/django
         dockerfile: Dockerfile
@@ -17,13 +19,16 @@ services:
     depends_on:
       - db
   frontend:
+    restart: always
     build: 
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
   redis:
-     image: redis:latest
+    restart: always
+    image: redis:latest
 
   celery:
+    restart: always
     build:
         context: ./rapstore-django/celery
         dockerfile: Dockerfile

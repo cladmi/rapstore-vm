@@ -2,6 +2,7 @@ version: '3'
 
 services:
   web:
+    restart: always
     command: bash -c "python manage.py collectstatic --noinput && sleep 5 && python manage.py migrate && python manage.py loaddata fixtures/*.json && cron && uwsgi --ini wsgi.ini"
     volumes:
         - ./rapstore-django/django:/code
@@ -9,6 +10,7 @@ services:
         - riot:/RIOT
         - static:/static
   nginx:
+    restart: always
     build: 
         context: ./rapstore-django/prod
         dockerfile: Dockerfile
@@ -22,6 +24,7 @@ services:
       - frontend
       - web
   frontend:
+    restart: always
     volumes:
         - ./rapstore-django/rapstore-frontend:/app
         - /app/node_modules
