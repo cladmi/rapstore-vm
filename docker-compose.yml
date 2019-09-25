@@ -21,7 +21,7 @@ services:
         context: ./rapstore-django/rapstore-frontend
         dockerfile: Dockerfile
   redis:
-     image: redis:latest
+     image: redis:4.0.14
 
   celery:
     build:
