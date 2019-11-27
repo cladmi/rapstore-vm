@@ -4,8 +4,7 @@
 The script is meant to be safe to run againts an already setup server.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 
 import os.path
@@ -42,8 +41,8 @@ def setup():
     execute(setup_git)
     execute(setup_docker)
     execute(setup_riot_build_tools)
-    execute(rapstore.setup)
     execute(builder.setup)
+
 
 @task
 def pull_or_clone_django():
@@ -53,6 +52,7 @@ def pull_or_clone_django():
     with cd(config.WWW_HOME):
         common.pull_or_clone(config.RAPSTORE_DJANGO_REPO, 'rapstore-django', branch, '', run_as_user='www-data')
 
+
 @task
 def deploy_docker():
     execute(pull_or_clone_django)
@@ -60,9 +60,11 @@ def deploy_docker():
     with cd(config.RAPSTORE_DJANGO):
         common.docker_refresh()
 
+
 @task
 def deploy_prod():
     rapstore._deploy_rapstore('master', '.env.prod', prod=True)
+
 
 @task
 def deploy_staging(dirty=None):
@@ -125,11 +127,13 @@ def setup_git():
     """Install git."""
     common.apt_install('git')
 
+
 @task
 def setup_docker():
     """Install Docker."""
     common.apt_install('docker')
     common.apt_install('docker-compose')
+
 
 @task
 def setup_riot_build_tools():
